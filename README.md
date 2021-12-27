@@ -2,9 +2,26 @@
 ラノベの杜提供のtsvファイルを基に，WebAPIのOpenBDからライトノベルの情報をデータベース(SQLite)に保存します．
 
 ## 実行手順
-1. ラノベの杜からtsvファイルをダウンロード
-2. config.iniにデータベース名とフィールド名の設定を記述．
-3. make_database.pyの実行
+1. analyze_openbdのダウンロード
+    ```shell
+    git clone https://github.com/inago-s/analyze_openbd.git
+    ```
+2. ラノベの杜からtsvファイルをダウンロード
+3. sourceフォルダを作成し，そこにtsvファイルを入れる．（複数ファイル可能）
+    ```shell
+    analyze_openbd
+        ├── README.md
+        ├── config.ini
+        ├── frequent_word.py
+        ├── lanove_2020.sqlite3
+        ├── make_database.py
+        ├── source
+        │   ├── 2020.tsv
+        │   └── 2021.tsv
+        └── stopword.txt
+    ```
+4. config.iniにデータベース名とフィールド名の設定を記述．
+5. make_database.pyの実行
     ```python
     pip install joblib pandas
     python make_database.py
