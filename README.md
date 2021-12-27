@@ -3,12 +3,12 @@
 
 ## 実行手順
 1. analyze_openbdのダウンロード
-    ```shell
+    ```bash
     git clone https://github.com/inago-s/analyze_openbd.git
     ```
 2. ラノベの杜からtsvファイルをダウンロード
 3. sourceフォルダを作成し，そこにtsvファイルを入れる．（複数ファイル可能）
-    ```shell
+    ```bash
     analyze_openbd
         ├── README.md
         ├── config.ini
@@ -22,7 +22,7 @@
     ```
 4. config.iniにデータベース名とフィールド名の設定を記述．
 5. make_database.pyの実行
-    ```python
+    ```bash
     pip install joblib pandas
     python make_database.py
     ```
