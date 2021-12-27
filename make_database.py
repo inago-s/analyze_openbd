@@ -10,9 +10,7 @@ OPENBD_ENDPOINT = 'https://api.openbd.jp/v1/'
 
 
 def get_list():
-    # フォルダにあるtsvファイル全てを使いたい場合
-    # tsv_list = glob.glob('フォルダパス/*.tsv')
-    tsv_list = ['2020.tsv']
+    tsv_list = glob.glob('source/*.tsv')
     isbn_list = []
     for tsv in tsv_list:
         isbn = pd.read_table(tsv, encoding='shift_jis', usecols=['ISBN'])
