@@ -1,7 +1,6 @@
 import pandas as pd
 import re
 import glob
-import tqdm
 import sqlite3
 import requests
 from configparser import ConfigParser
