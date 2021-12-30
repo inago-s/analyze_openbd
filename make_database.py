@@ -88,108 +88,118 @@ def main():
                 query.append(isbn)
 
             # タイトル
-            try:
-                title = book['summary']['title']
-            except (KeyError, TypeError):
-                title = ''
             if 'title' in field_name:
+                try:
+                    title = book['summary']['title']
+                except (KeyError, TypeError):
+                    title = None
                 query.append(title)
 
             # 著者/イラストレーター
-            author_list = []
-            illustrator_list = []
+            if 'author' in field_name or 'illustrator' in field_name:
+                author_list = []
+                illustrator_list = []
 
-            try:
-                for author in book['onix']['DescriptiveDetail']['Contributor']:
-                    for authortype in author['ContributorRole']:
-                        if authortype == "A01":
-                            author_list.append(
-                                author['PersonName']['content'])
-                        elif authortype == 'A12':
-                            illustrator_list.append(
-                                author['PersonName']['content'])
+                try:
+                    for author in book['onix']['DescriptiveDetail']['Contributor']:
+                        for authortype in author['ContributorRole']:
+                            if authortype == "A01":
+                                author_list.append(
+                                    author['PersonName']['content'])
+                            elif authortype == 'A12':
+                                illustrator_list.append(
+                                    author['PersonName']['content'])
 
-                if author_list:
-                    author_list = "/".join(author_list)
-                else:
-                    author_list = ''
+                    if author_list:
+                        author_list = "/".join(author_list)
+                    else:
+                        author_list = None
 
-                if illustrator_list:
-                    illustrator_list = "/".join(illustrator_list)
-                else:
-                    illustrator_list = ''
-            except (KeyError, TypeError):
-                author_list = ''
-                illustrator_list = ''
+                    if illustrator_list:
+                        illustrator_list = "/".join(illustrator_list)
+                    else:
+                        illustrator_list = None
+                except (KeyError, TypeError):
+                    author_list = None
+                    illustrator_list = None
 
-            if 'author' in field_name:
-                query.append(author_list)
-            if 'illustrator' in field_name:
-                query.append(illustrator_list)
+                if 'author' in field_name:
+                    query.append(author_list)
+                if 'illustrator' in field_name:
+                    query.append(illustrator_list)
 
             # コンテンツ内容
-            temp = []
-            try:
-                for Content in book['onix']['CollateralDetail']['TextContent']:
-                    temp.append(Content['Text'])
-                content = sorted(temp, reverse=True, key=len)[0]
-                content = re.sub(r"\s", "", content)
-            except (KeyError, TypeError):
-                content = ''
-
             if 'content' in field_name:
+                temp = []
+                try:
+                    for Content in book['onix']['CollateralDetail']['TextContent']:
+                        temp.append(Content['Text'])
+                    content = sorted(temp, reverse=True, key=len)[0]
+                    content = re.sub(r"\s", "", content)
+                except (KeyError, TypeError):
+                    content = None
                 query.append(content)
 
             # 価格
-            try:
-                prise = book['onix']["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
-            except (KeyError, TypeError):
-                prise = None
 
             if 'prise' in field_name:
+                try:
+                    prise = book['onix']["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+                except (KeyError, TypeError):
+                    prise = None
                 query.append(prise)
 
             # ページ数
-            try:
-                pages = book['onix']['DescriptiveDetail']['Extent'][0]['ExtentValue']
-            except (KeyError, TypeError):
-                pages = ''
-
             if 'pages' in field_name:
+                try:
+                    pages = book['onix']['DescriptiveDetail']['Extent'][0]['ExtentValue']
+                except (KeyError, TypeError):
+                    pages = None
                 query.append(pages)
 
-            # 発売日
-            try:
-                pubdate = book['summary']['pubdate']
-            except (KeyError, TypeError):
-                pubdate = ''
+            # 判型
+            if 'detail' in field_name:
+                try:
+                    detail_code = book['onix']['DescriptiveDetail']['ProductFormDetail']
+                    if detail_code == 'B111':
+                        detail = '文庫'
+                    elif detail_code == 'B110' or detail_code == 'B119':
+                        detail = '新書'
+                    else:
+                        detail = None
+                except (KeyError, TypeError):
+                    detail = None
+                query.append(detail)
 
+            # 発売日
             if 'pubdate' in field_name:
+                try:
+                    pubdate = book['summary']['pubdate']
+                except (KeyError, TypeError):
+                    pubdate = None
                 query.append(pubdate)
 
             # レーベル
-            try:
-                label = ''
-                for Label in book['onix']['DescriptiveDetail']['Collection']['TitleDetail']['TitleElement']:
-                    if 'TitleElementLevel' in Label and (Label['TitleElementLevel'] == "02"):
-                        label = Label['TitleText']['content']
-                        break
-                    elif 'TitleElementLevel' in Label and (Label['TitleElementLevel'] == "03"):
-                        label = Label['TitleText']['content']
-                        break
-            except (KeyError, TypeError):
-                label = ''
-
             if 'label' in field_name:
+                try:
+                    label = None
+                    for Label in book['onix']['DescriptiveDetail']['Collection']['TitleDetail']['TitleElement']:
+                        if 'TitleElementLevel' in Label and (Label['TitleElementLevel'] == "02"):
+                            label = Label['TitleText']['content']
+                            break
+                        elif 'TitleElementLevel' in Label and (Label['TitleElementLevel'] == "03"):
+                            label = Label['TitleText']['content']
+                            break
+                except (KeyError, TypeError):
+                    label = None
                 query.append(label)
 
             # 出版社
-            try:
-                publisher = book['summary']['publisher']
-            except (KeyError, TypeError):
-                publisher = ''
-
             if 'publisher' in field_name:
+                try:
+                    publisher = book['summary']['publisher']
+                except (KeyError, TypeError):
+                    publisher = None
                 query.append(publisher)
 
             c.execute(excute, query)
