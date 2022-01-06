@@ -2,3 +2,5 @@
 *.tsv
 source
 __pycache__
+*.csv
+*.png
