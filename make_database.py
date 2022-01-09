@@ -103,7 +103,7 @@ def main():
                 try:
                     for author in book['onix']['DescriptiveDetail']['Contributor']:
                         for authortype in author['ContributorRole']:
-                            if authortype == "A01":
+                            if authortype == "A01" or authortype == "A38":
                                 author_list.append(
                                     author['PersonName']['content'])
                             elif authortype == 'A12':
